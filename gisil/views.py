@@ -64,3 +64,6 @@ def entry_value(request):
             return redirect('gisil-values')
     
     return render(request, 'gisil/gisil_values.html')
+
+def customer(request):
+    return render(request, 'gisil/customer.html')
