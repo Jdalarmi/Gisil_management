@@ -12,7 +12,7 @@
 {% block content %}
         <main role="main" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4">
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-              <h1 class="h2">Dashboard</h1>
+              <h1 class="h2">Lucro Liquido X Lucro bruto</h1>
               <div class="btn-toolbar mb-2 mb-md-0">
                 <div class="btn-group mr-2">
                   <button class="btn btn-sm btn-outline-secondary">Share</button>
@@ -25,7 +25,7 @@
               </div>
             </div>
             <canvas class="my-4" id="myChart" width="900" height="380"></canvas>
-            <h2>Categorias de Gastos</h2>
+            {% comment %} <h2>Categorias de Gastos</h2>
             <div class="table-responsive">
               <table class="table table-bordered table-dark">
                 <thead>
@@ -42,7 +42,7 @@
                       </tr>
                 </tbody>
               </table>
-            </div>
+            </div> {% endcomment %}
           </main>
       <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
       <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
@@ -58,32 +58,41 @@
       <script>
         var ctx = document.getElementById("myChart");
         var myChart = new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: [{% for month in range_month %} '{{month.month}}',{% endfor %}],
-            datasets: [{
-              data: [{% for value in range_month %} {{ value.value_all }},{% endfor %}],
-              lineTension: 0,
-              backgroundColor: 'transparent',
-              borderColor: '#007bff',
-              borderWidth: 4,
-              pointBackgroundColor: '#007bff'
-            }]
-          },
-          options: {
-            scales: {
-              yAxes: [{
-                ticks: {
-                  beginAtZero: false
-                }
-              }]
+            type: 'line',
+            data: {
+                labels: [{% for month in values %} '{{month.month}}',{% endfor %}],
+                datasets: [{
+                    data: [{% for value in values %} {{ value.liquid_value }},{% endfor %}],
+                    lineTension: 0,
+                    backgroundColor: 'transparent',
+                    borderColor: '#00A36C',
+                    borderWidth: 4,
+                    pointBackgroundColor: '#007bff'
+                },
+                {
+                    data: [1000, 500],
+                    lineTension: 0,
+                    backgroundColor: 'transparent',
+                    borderColor: '#ff0000', 
+                    borderWidth: 4,
+                    pointBackgroundColor: '#ff0000' 
+                }]
             },
-            legend: {
-              display: false,
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: false
+                        }
+                    }]
+                },
+                legend: {
+                    display: false,
+                }
             }
-          }
         });
     </script>
+    
 {% endblock %}
 </body>
 </html>

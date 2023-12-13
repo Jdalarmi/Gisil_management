@@ -3,7 +3,11 @@ from .models import GroosValue, LiquidValue
 from datetime import datetime
 from django.contrib import messages
 def index(request):
-    return render(request, 'gisil/index.html')
+    values = LiquidValue.objects.all()
+    context = {
+        "values":values
+    }
+    return render(request, 'gisil/index.html', context)
 
 def entry_value(request):
 
@@ -15,6 +19,19 @@ def entry_value(request):
         frete = float(request.POST.get('frete').replace(",", "."))
         box = float(request.POST.get('box').replace(",", "."))
         nf = request.POST.get('nf')
+
+        data, created = GroosValue.objects.get_or_create(
+            value_groos = value,
+            date = date,
+            quantity = quantity,
+            frete = frete,
+            box_value = box,
+        )
+        if not created:
+            data.value_groos += value
+            data.quantity += quantity
+            data.frete += frete
+            data.box_value += box
 
         data_obj = datetime.strptime(date, '%Y-%m-%d')
         month_name = data_obj.strftime('%B')
@@ -45,5 +62,5 @@ def entry_value(request):
             dados_mensais.save()
             messages.success(request, 'Pedido cadastrado com SUCESSO!!')
             return redirect('gisil-values')
-        
+    
     return render(request, 'gisil/gisil_values.html')

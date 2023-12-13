@@ -1,3 +1,5 @@
 from django.contrib import admin
+from .models import LiquidValue, GroosValue
 
-# Register your models here.
+admin.site.register(LiquidValue)
+admin.site.register(GroosValue)
