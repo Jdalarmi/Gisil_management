@@ -1,1 +1,75 @@
 {% extends "partials/base.html" %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <title>Document</title>
+</head>
+<body>
+    {% block content %}
+    <div class="container mt-5">
+        <form method="post" action="">
+            {% csrf_token %}
+            {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+            <div>
+                <h1>Entradas - Lucro liquido</h1>
+            </div>
+            <hr>
+            <div class="form-row">
+                <div class="col-md-4 mb-3">
+                    <label for="value">Valor Bruto:</label>
+                    <input type="text" class="form-control" id="value" name="value">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="id_date">Data do pagamento</label>
+                    <input type="date" class="form-control" id="id_date" name="date" required>
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="value">Quantidade de pastas</label>
+                    <input type="text" class="form-control" id="value" name="quantity">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="value">Quantidade de kilates</label>
+                    <input type="text" class="form-control" id="value" name="kilate">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="value">Frete</label>
+                    <input type="text" class="form-control" id="value" name="frete">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="value">Valor da caixa</label>
+                    <input type="text" class="form-control" id="value" name="box">
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="value">Nfe status:</label>
+                    <select class="custom-select mr-sm-2" id="inlineFormCustomSelect" name="nf">
+                        <option selected>Choose...</option>
+                        <option value="1">Venda com nota</option>
+                        <option value="2">Venda sem nota</option>
+                    </select>
+                </div>
+                {% comment %} <div class="col-md-4 mb-3">
+                    <label for="value">Cliente</label>
+                    <input type="text" class="form-control" id="value" name="customer">
+                </div> {% endcomment %}
+                
+            </div>
+            <button class="btn btn-primary" type="submit">Calcular</button>
+        </form>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    {% endblock %}
+</body>
+</html>
