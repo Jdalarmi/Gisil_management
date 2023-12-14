@@ -1,11 +1,11 @@
 from django.shortcuts import render, redirect
-from .models import GroosValue, LiquidValue
+from .models import GroosValue, LiquidValue, GisilValues
 from datetime import datetime
 from django.contrib import messages
 def index(request):
     values = LiquidValue.objects.all()
     context = {
-        "values":values
+        "values":values,
     }
     return render(request, 'gisil/index.html', context)
 
@@ -20,50 +20,80 @@ def entry_value(request):
         box = float(request.POST.get('box').replace(",", "."))
         nf = request.POST.get('nf')
 
-        data, created = GroosValue.objects.get_or_create(
-            value_groos = value,
-            date = date,
-            quantity = quantity,
-            frete = frete,
-            box_value = box,
-        )
-        if not created:
-            data.value_groos += value
-            data.quantity += quantity
-            data.frete += frete
-            data.box_value += box
+        nf_exist = value * (5 / 100)
+
+        nf_not_exist = value * (2 / 100)
 
         data_obj = datetime.strptime(date, '%Y-%m-%d')
         month_name = data_obj.strftime('%B')
 
         kilate_value = quantity * kilate * 0.2 * 5
-        outher_cust = box + frete
+        outher_cust = box + frete + (quantity * 1.90)
+        
         if nf == '1':
             value_nf = value * (4.5 / 100)
-            liquid_value_total = value - (kilate_value - outher_cust - value_nf)
+            liquid_value_total = value - kilate_value - outher_cust - value_nf - nf_exist - nf_exist
             dados_mensais, created = LiquidValue.objects.get_or_create(
                 month = month_name,
                 defaults={'liquid_value':liquid_value_total}
             )
             if not created:
                 dados_mensais.liquid_value += liquid_value_total
+                dados_mensais.save()
+            
+            gisil_values_instance, created = GisilValues.objects.get_or_create(
+                emergency=nf_exist,
+                imposto = value_nf,
+                boleto = kilate_value+outher_cust,
+                invest = nf_not_exist,
+                lucro = liquid_value_total
+                )
+
+            gisil_values_instance.emergency += nf_exist
+            gisil_values_instance.imposto += value_nf
+            gisil_values_instance.boleto += kilate_value + outher_cust  
+            gisil_values_instance.invest += nf_not_exist
+            gisil_values_instance.lucro += liquid_value_total
+
+            gisil_values_instance.save()
 
             dados_mensais.save()
-            messages.success(request, 'Pedido cadastrado com SUCESSO!!')
+            messages.success(request, 'Pedido Recebido com SUCESSO!!')
             return redirect('gisil-values')
-        elif nf == '2':
-            liquid_value_total = value - (kilate_value - outher_cust)
+        
+        if nf == '2':
+            liquid_value_total = value - kilate_value - outher_cust -nf_exist - nf_exist
             dados_mensais, created = LiquidValue.objects.get_or_create(
                 month = month_name,
                 defaults={'liquid_value':liquid_value_total}
             )
             if not created:
                 dados_mensais.liquid_value += liquid_value_total
-            dados_mensais.save()
-            messages.success(request, 'Pedido cadastrado com SUCESSO!!')
+                dados_mensais.save()
+
+            gisil_values_instance, _ = GisilValues.objects.get_or_create(
+                emergency=nf_exist
+                )
+
+            gisil_values_instance.emergency += nf_exist
+            gisil_values_instance.imposto += 0
+            gisil_values_instance.boleto += kilate_value + outher_cust  
+            gisil_values_instance.invest += nf_not_exist
+            gisil_values_instance.lucro += liquid_value_total
+
+            gisil_values_instance.save()
+
+
+            messages.success(request, 'Pedido Recebido com SUCESSO!!')
             return redirect('gisil-values')
+        
+    values_gisil = GisilValues.objects.all
+    context = {
+        "values_gisil":values_gisil
+    }
+
     
-    return render(request, 'gisil/gisil_values.html')
+    return render(request, 'gisil/gisil_values.html', context)
 
 def customer(request):
     return render(request, 'gisil/customer.html')
