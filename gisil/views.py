@@ -42,12 +42,9 @@ def entry_value(request):
                 dados_mensais.save()
             
             gisil_values_instance, created = GisilValues.objects.get_or_create(
-                emergency=nf_exist,
-                imposto = value_nf,
-                boleto = kilate_value+outher_cust,
-                invest = nf_not_exist,
-                lucro = liquid_value_total
-                )
+            id=1,
+            defaults={'emergency': 0, 'imposto': 0, 'boleto': 0, 'invest': 0, 'lucro': 0}
+            )
 
             gisil_values_instance.emergency += nf_exist
             gisil_values_instance.imposto += value_nf
@@ -71,9 +68,10 @@ def entry_value(request):
                 dados_mensais.liquid_value += liquid_value_total
                 dados_mensais.save()
 
-            gisil_values_instance, _ = GisilValues.objects.get_or_create(
-                emergency=nf_exist
-                )
+            gisil_values_instance, created = GisilValues.objects.get_or_create(
+                id=1,
+                defaults={'emergency': 0, 'imposto': 0, 'boleto': 0, 'invest': 0, 'lucro': 0}
+            )
 
             gisil_values_instance.emergency += nf_exist
             gisil_values_instance.imposto += 0
