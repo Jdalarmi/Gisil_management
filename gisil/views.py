@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from .models import GroosValue, LiquidValue, GisilValues
 from datetime import datetime
 from django.contrib import messages
+
+
 def index(request):
     values = LiquidValue.objects.all()
     context = {
@@ -10,7 +12,6 @@ def index(request):
     return render(request, 'gisil/index.html', context)
 
 def entry_value(request):
-
     if request.method == 'POST':
         value = float(request.POST.get('value').replace(",", "."))
         date = request.POST.get('date').replace(",", ".")
@@ -33,10 +34,31 @@ def entry_value(request):
         if nf == '1':
             value_nf = value * (4.5 / 100)
             liquid_value_total = value - kilate_value - outher_cust - value_nf - nf_exist - nf_exist
+
+            valor_lucro_total = liquid_value_total
+
+            request.session['valor_reserva'] += nf_exist
+            request.session['valor_imposto'] += value_nf
+            request.session['valor_boleto'] += kilate_value + outher_cust
+            request.session['valor_investimento'] += nf_not_exist
+            request.session['valor_investimento'] += nf_not_exist
+            if 'valor_lucro_liquido' in request.session:
+                request.session['valor_lucro_liquido'] += valor_lucro_total
+            else:
+                request.session['valor_lucro_liquido'] = valor_lucro_total
+
+
+            print(request.session['valor_reserva'])
+            print(request.session['valor_imposto'])
+            print(request.session['valor_boleto'])
+            print(request.session['valor_investimento'])
+            print(request.session['valor_lucro_liquido'])
+
             dados_mensais, created = LiquidValue.objects.get_or_create(
                 month = month_name,
                 defaults={'liquid_value':liquid_value_total}
             )
+
             if not created:
                 dados_mensais.liquid_value += liquid_value_total
                 dados_mensais.save()
@@ -45,7 +67,7 @@ def entry_value(request):
             id=1,
             defaults={'emergency': 0, 'imposto': 0, 'boleto': 0, 'invest': 0, 'lucro': 0}
             )
-
+            
             gisil_values_instance.emergency += nf_exist
             gisil_values_instance.imposto += value_nf
             gisil_values_instance.boleto += kilate_value + outher_cust  
@@ -73,6 +95,18 @@ def entry_value(request):
                 defaults={'emergency': 0, 'imposto': 0, 'boleto': 0, 'invest': 0, 'lucro': 0}
             )
 
+            valor_lucro_total = liquid_value_total
+
+            request.session['valor_reserva'] += nf_exist
+            request.session['valor_imposto'] = 0
+            request.session['valor_boleto'] += kilate_value + outher_cust
+            request.session['valor_investimento'] += nf_not_exist
+            if 'valor_lucro_liquido' in request.session:
+                request.session['valor_lucro_liquido'] += valor_lucro_total
+            else:
+                request.session['valor_lucro_liquido'] = valor_lucro_total
+
+
             gisil_values_instance.emergency += nf_exist
             gisil_values_instance.imposto += 0
             gisil_values_instance.boleto += kilate_value + outher_cust  
@@ -84,10 +118,18 @@ def entry_value(request):
 
             messages.success(request, 'Pedido Recebido com SUCESSO!!')
             return redirect('gisil-values')
-        
+    totals = {
+        'valor_reserva':request.session['valor_reserva'],
+        'valor_imposto':request.session['valor_imposto'],
+        'valor_boleto':request.session['valor_boleto'],
+        'valor_investimento':request.session['valor_investimento'],
+        'valor_lucro_liquido':request.session['valor_lucro_liquido']
+    }  
+
     values_gisil = GisilValues.objects.all
     context = {
-        "values_gisil":values_gisil
+        "values_gisil":values_gisil,
+        "totals":totals
     }
 
     
@@ -95,3 +137,13 @@ def entry_value(request):
 
 def customer(request):
     return render(request, 'gisil/customer.html')
+
+#função tempoaria
+def reset_all_zero(request):
+    request.session['valor_reserva'] = 0
+    request.session['valor_reserva'] = 0
+    request.session['valor_imposto'] = 0 
+    request.session['valor_boleto'] = 0
+    request.session['valor_investimento'] = 0
+    request.session['valor_lucro_liquido'] = 0
+    return redirect('gisil-values')

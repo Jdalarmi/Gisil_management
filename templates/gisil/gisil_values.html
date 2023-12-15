@@ -20,6 +20,32 @@
                 {% endfor %}
             </ul>
             {% endif %}
+            <div class="table-responsive">
+                <table class="table table-bordered table">
+                  <thead style="background:green">
+                    <tr>
+                      <th>Reserva da empresa</th>
+                      <th>Imposto</th>
+                      <th>Pagar boletos</th>
+                      <th>Investimento</th>
+                      <th>Lucro</th>
+                      <th>Atualizar Valor</th>
+                    </tr>
+                  </thead>
+                  {% for value in values_gisil %}
+                    <tbody style="font-size:20px">
+                        <tr>
+                          <td>R$ {{value.emergency | floatformat}}</td>
+                          <td>R$ {{value.imposto | floatformat}}</td>
+                          <td>R$ {{value.boleto}}</td>
+                          <td>R$ {{value.invest|floatformat}}</td>
+                          <td>R$ {{value.lucro | floatformat}}</td>
+                          <td><a class="btn btn-success" href="">Atualizar</a></td>
+                        </tr>
+                    </tbody>
+                {% endfor %}
+                </table>
+            </div>
             <div>
                 <h1>Entradas - Lucro liquido</h1>
             </div>
@@ -69,28 +95,26 @@
         <hr>
         <div class="table-responsive">
             <table class="table table-bordered table">
-              <thead style="background:green">
+              <thead style="background:whithe">
                 <tr>
                   <th>Reserva da empresa</th>
                   <th>Imposto</th>
                   <th>Pagar boletos</th>
                   <th>Investimento</th>
                   <th>Lucro</th>
-                  <th>Atualizar Valor</th>
+                  <th></th>
                 </tr>
               </thead>
-              {% for value in values_gisil %}
                 <tbody style="font-size:20px">
                     <tr>
-                      <td>R$ {{value.emergency}}</td>
-                      <td>R$ {{value.imposto}}</td>
-                      <td>R$ {{value.boleto}}</td>
-                      <td>R$ {{value.invest|floatformat}}</td>
-                      <td>R$ {{value.lucro}}</td>
-                      <td><a class="btn btn-success" href="">Atualizar</a></td>
+                      <td>R${{totals.valor_reserva}}</td>
+                      <td>R${{totals.valor_imposto}}</td>
+                      <td>R${{totals.valor_boleto}}</td>
+                      <td>R${{totals.valor_investimento | floatformat}}</td>
+                      <td>R${{totals.valor_lucro_liquido}}</td>
+                      <td><a class="btn btn-primary" href="{% url "all-zero" %}">Resetar valor</a></td>
                     </tr>
                 </tbody>
-            {% endfor %}
             </table>    
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.7/dist/umd/popper.min.js"></script>
