@@ -3,11 +3,16 @@ from .models import LiquidValue, GisilValues
 from datetime import datetime
 from django.contrib import messages
 from .forms import GisilForm
+from utils.grafic_bar import generate_bar
 
 def index(request):
+    categories = ['caixa', 'frete']
+    values = [10, 50]
+    chart_data = generate_bar(categories, values)
     values = LiquidValue.objects.all()
     context = {
         "values":values,
+        "chart_data":chart_data
     }
     return render(request, 'gisil/index.html', context)
 
