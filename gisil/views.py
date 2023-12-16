@@ -1,8 +1,8 @@
-from django.shortcuts import render, redirect
-from .models import GroosValue, LiquidValue, GisilValues
+from django.shortcuts import get_object_or_404, render, redirect
+from .models import LiquidValue, GisilValues
 from datetime import datetime
 from django.contrib import messages
-
+from .forms import GisilForm
 
 def index(request):
     values = LiquidValue.objects.all()
@@ -139,3 +139,17 @@ def reset_all_zero(request):
     request.session['valor_investimento'] = 0
     request.session['valor_lucro_liquido'] = 0
     return redirect('gisil-values')
+
+
+def edit_values(request):
+    instancia  = get_object_or_404(GisilValues)
+
+    if request.method == "POST":
+        form = GisilForm(request.POST, instance = instancia)
+        if form.is_valid():
+            form.save()
+            return redirect('gisil-values')
+    else:
+        form = GisilForm(instance=instancia)
+
+    return render(request, 'gisil/edit_values.html', {"form":form})

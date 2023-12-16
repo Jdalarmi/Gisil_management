@@ -40,7 +40,7 @@
                           <td>R$ {{value.boleto}}</td>
                           <td>R$ {{value.invest|floatformat}}</td>
                           <td>R$ {{value.lucro | floatformat}}</td>
-                          <td><a class="btn btn-success" href="">Atualizar</a></td>
+                          <td><a class="btn btn-success" href="{% url "edit-values" %}">Atualizar</a></td>
                         </tr>
                     </tbody>
                 {% endfor %}
