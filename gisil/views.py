@@ -41,18 +41,10 @@ def entry_value(request):
             request.session['valor_imposto'] += value_nf
             request.session['valor_boleto'] += kilate_value + outher_cust
             request.session['valor_investimento'] += nf_not_exist
-            request.session['valor_investimento'] += nf_not_exist
             if 'valor_lucro_liquido' in request.session:
                 request.session['valor_lucro_liquido'] += valor_lucro_total
             else:
                 request.session['valor_lucro_liquido'] = valor_lucro_total
-
-
-            print(request.session['valor_reserva'])
-            print(request.session['valor_imposto'])
-            print(request.session['valor_boleto'])
-            print(request.session['valor_investimento'])
-            print(request.session['valor_lucro_liquido'])
 
             dados_mensais, created = LiquidValue.objects.get_or_create(
                 month = month_name,
@@ -100,7 +92,7 @@ def entry_value(request):
             request.session['valor_reserva'] += nf_exist
             request.session['valor_imposto'] = 0
             request.session['valor_boleto'] += kilate_value + outher_cust
-            request.session['valor_investimento'] += nf_not_exist
+            request.session['valor_investimento'] += nf_exist
             if 'valor_lucro_liquido' in request.session:
                 request.session['valor_lucro_liquido'] += valor_lucro_total
             else:
