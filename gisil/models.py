@@ -17,3 +17,7 @@ class GisilValues(models.Model):
     boleto = models.FloatField()
     invest = models.FloatField()
     lucro = models.FloatField()
+
+class DefinitionsValues(models.Model):
+    box = models.FloatField()
+    frete_cust = models.FloatField()

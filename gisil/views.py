@@ -1,5 +1,5 @@
 from django.shortcuts import get_object_or_404, render, redirect
-from .models import LiquidValue, GisilValues
+from .models import LiquidValue, GisilValues, DefinitionsValues
 from datetime import datetime
 from django.contrib import messages
 from .forms import GisilForm
@@ -10,13 +10,18 @@ from django.contrib.auth.decorators import login_required
 
 @login_required(login_url='user-login')
 def index(request):
+    definition_values = DefinitionsValues.objects.all()
     categories = ['caixa', 'frete']
-    values = [10, 50]
+    for obj in definition_values:
+        box_value = obj.box
+        cust_value = obj.frete_cust
+
+    values = [box_value, cust_value]
     chart_data = generate_bar(categories, values)
     values = LiquidValue.objects.all()
     context = {
         "values":values,
-        "chart_data":chart_data
+        "chart_data":chart_data,
     }
     return render(request, 'gisil/index.html', context)
 
