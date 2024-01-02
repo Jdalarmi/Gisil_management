@@ -10,10 +10,13 @@ def generate_bar(categories, values):
     bar_labels = ['red', 'blue']
     bar_colors = ['tab:red', 'tab:blue']
 
-    ax.bar(categories, values, label=bar_labels, color=bar_colors)
+    bars = ax.bar(categories, values, label=bar_labels, color=bar_colors)
 
     ax.set_title('Gestão de gasto com materiais')
-    # ax.legend(title='Gestão de gasto com materiais')
+    for bar, value in zip(bars, values):
+            height = bar.get_height()
+            ax.text(bar.get_x() + bar.get_width() / 2, height, f'{value}', 
+                    ha='center', va='bottom')
 
     buffer = BytesIO()
     plt.savefig(buffer, format='png')
