@@ -4,7 +4,11 @@ from datetime import datetime
 from django.contrib import messages
 from .forms import GisilForm
 from utils.grafic_bar import generate_bar
+from django.contrib.auth import authenticate
+from django.contrib import auth
+from django.contrib.auth.decorators import login_required
 
+@login_required(login_url='user-login')
 def index(request):
     categories = ['caixa', 'frete']
     values = [10, 50]
@@ -16,6 +20,8 @@ def index(request):
     }
     return render(request, 'gisil/index.html', context)
 
+
+@login_required(login_url='user-login')
 def entry_value(request):
     if request.method == 'POST':
         value = float(request.POST.get('value').replace(",", "."))
@@ -115,13 +121,20 @@ def entry_value(request):
 
             messages.success(request, 'Pedido Recebido com SUCESSO!!')
             return redirect('gisil-values')
+    # totals = {
+    #     'valor_reserva':request.session['valor_reserva'],
+    #     'valor_imposto':request.session['valor_imposto'],
+    #     'valor_boleto':request.session['valor_boleto'],
+    #     'valor_investimento':request.session['valor_investimento'],
+    #     'valor_lucro_liquido':request.session['valor_lucro_liquido']
+    # }  
     totals = {
-        'valor_reserva':request.session['valor_reserva'],
-        'valor_imposto':request.session['valor_imposto'],
-        'valor_boleto':request.session['valor_boleto'],
-        'valor_investimento':request.session['valor_investimento'],
-        'valor_lucro_liquido':request.session['valor_lucro_liquido']
-    }  
+        'valor_reserva': request.session.get('valor_reserva', 0),
+        'valor_imposto': request.session.get('valor_imposto', 0),
+        'valor_boleto': request.session.get('valor_boleto', 0),
+        'valor_investimento': request.session.get('valor_investimento', 0),
+        'valor_lucro_liquido': request.session.get('valor_lucro_liquido', 0),
+    }
 
     values_gisil = GisilValues.objects.all
     context = {
@@ -132,6 +145,8 @@ def entry_value(request):
     
     return render(request, 'gisil/gisil_values.html', context)
 
+
+@login_required(login_url='user-login')
 def customer(request):
     return render(request, 'gisil/customer.html')
 
@@ -145,7 +160,7 @@ def reset_all_zero(request):
     request.session['valor_lucro_liquido'] = 0
     return redirect('gisil-values')
 
-
+@login_required(login_url='user-login')
 def edit_values(request):
     instancia  = get_object_or_404(GisilValues)
 
@@ -158,3 +173,24 @@ def edit_values(request):
         form = GisilForm(instance=instancia)
 
     return render(request, 'gisil/edit_values.html', {"form":form})
+
+
+def user_login(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            auth.login(request, user)
+            return redirect('index')
+        else:
+            messages.error(request, 'Usuario não existe! Favor registre seu usuario.')
+            return redirect('user-login')
+    return render(request, 'gisil/user_login.html')
+
+def logout_user(request):
+    auth.logout(request)
+
+    return redirect('user-login')

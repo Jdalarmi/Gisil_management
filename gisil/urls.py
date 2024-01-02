@@ -7,4 +7,6 @@ urlpatterns = [
     path('customer/', views.customer, name="gisil-customer"),
     path('all_zero/', views.reset_all_zero, name='all-zero'),
     path('edit_values/', views.edit_values, name='edit-values'),
+    path('user_login/', views.user_login, name="user-login"),
+    path('logout_user/', views.logout_user, name='logout-user'),
 ]
