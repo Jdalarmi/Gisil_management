@@ -37,6 +37,14 @@ def entry_value(request):
         box = float(request.POST.get('box').replace(",", "."))
         nf = request.POST.get('nf')
 
+        data_definitions = DefinitionsValues.objects.filter(box=box, frete_cust=frete).first()
+        if data_definitions is None:
+            data_definitions = DefinitionsValues.objects.create(box=box, frete_cust=frete)
+        else:
+            data_definitions.box += box
+            data_definitions.frete_cust += frete
+            data_definitions.save()
+
         nf_exist = value * (5 / 100)
 
         nf_not_exist = value * (2 / 100)
