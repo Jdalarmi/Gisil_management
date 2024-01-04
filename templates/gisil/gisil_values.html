@@ -22,7 +22,7 @@
             {% endif %}
             <div class="table-responsive">
                 <table class="table table-bordered table">
-                  <thead style="background:green">
+                  <thead style="background:green;color:#fff;text-align:center">
                     <tr>
                       <th>Reserva da empresa</th>
                       <th>Imposto</th>
@@ -33,13 +33,13 @@
                     </tr>
                   </thead>
                   {% for value in values_gisil %}
-                    <tbody style="font-size:20px">
+                    <tbody style="font-size:20px; text-align:center">
                         <tr>
-                          <td>R$ {{value.emergency | floatformat}}</td>
-                          <td>R$ {{value.imposto | floatformat}}</td>
-                          <td>R$ {{value.boleto}}</td>
-                          <td>R$ {{value.invest|floatformat}}</td>
-                          <td>R$ {{value.lucro | floatformat}}</td>
+                          <td>R${{value.emergency | floatformat}}</td>
+                          <td>R${{value.imposto | floatformat}}</td>
+                          <td>R${{value.boleto | floatformat}}</td>
+                          <td>R${{value.invest|floatformat}}</td>
+                          <td>R${{value.lucro | floatformat}}</td>
                           <td><a class="btn btn-success" href="{% url "edit-values" %}">Atualizar</a></td>
                         </tr>
                     </tbody>
@@ -95,7 +95,7 @@
         <hr>
         <div class="table-responsive">
             <table class="table table-bordered table">
-              <thead style="background:whithe">
+              <thead style="background:whithe; text-align:center">
                 <tr>
                   <th>Reserva da empresa</th>
                   <th>Imposto</th>
@@ -105,13 +105,13 @@
                   <th></th>
                 </tr>
               </thead>
-                <tbody style="font-size:20px">
+                <tbody style="font-size:20px; text-align:center">
                     <tr>
-                      <td>R${{totals.valor_reserva}}</td>
-                      <td>R${{totals.valor_imposto}}</td>
-                      <td>R${{totals.valor_boleto}}</td>
+                      <td>R${{totals.valor_reserva | floatformat}}</td>
+                      <td>R${{totals.valor_imposto | floatformat}}</td>
+                      <td>R${{totals.valor_boleto | floatformat}}</td>
                       <td>R${{totals.valor_investimento | floatformat}}</td>
-                      <td>R${{totals.valor_lucro_liquido}}</td>
+                      <td>R${{totals.valor_lucro_liquido | floatformat}}</td>
                       <td><a class="btn btn-primary" href="{% url "all-zero" %}">Resetar valor</a></td>
                     </tr>
                 </tbody>
