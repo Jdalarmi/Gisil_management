@@ -131,7 +131,7 @@ def entry_value(request):
             gisil_values_instance.emergency += nf_exist
             gisil_values_instance.imposto += 0
             gisil_values_instance.boleto += kilate_value + outher_cust  
-            gisil_values_instance.invest += nf_not_exist
+            gisil_values_instance.invest += nf_exist
             gisil_values_instance.lucro += liquid_value_total
 
             gisil_values_instance.save()
@@ -139,13 +139,7 @@ def entry_value(request):
 
             messages.success(request, 'Pedido Recebido com SUCESSO!!')
             return redirect('gisil-values')
-    # totals = {
-    #     'valor_reserva':request.session['valor_reserva'],
-    #     'valor_imposto':request.session['valor_imposto'],
-    #     'valor_boleto':request.session['valor_boleto'],
-    #     'valor_investimento':request.session['valor_investimento'],
-    #     'valor_lucro_liquido':request.session['valor_lucro_liquido']
-    # }  
+   
     totals = {
         'valor_reserva': request.session.get('valor_reserva', 0),
         'valor_imposto': request.session.get('valor_imposto', 0),
