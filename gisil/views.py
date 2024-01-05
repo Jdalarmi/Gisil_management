@@ -8,15 +8,19 @@ from django.contrib.auth import authenticate
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 
+
 @login_required(login_url='user-login')
 def index(request):
     definition_values = DefinitionsValues.objects.all()
     categories = ['caixa', 'frete']
-    for obj in definition_values:
-        box_value = obj.box
-        cust_value = obj.frete_cust
+    
+    box_value = [obj.box_cust for obj in definition_values]
+    frete_value = [obj.frete_cust for obj in definition_values]
+    
+    box_value = box_value[0]
+    frete_value = frete_value[0]
 
-    values = [box_value, cust_value]
+    values = [box_value, frete_value]
     chart_data = generate_bar(categories, values)
     values = LiquidValue.objects.all()
     context = {
@@ -37,13 +41,14 @@ def entry_value(request):
         box = float(request.POST.get('box').replace(",", "."))
         nf = request.POST.get('nf')
 
-        data_definitions = DefinitionsValues.objects.filter(box=box, frete_cust=frete).first()
-        if data_definitions is None:
-            data_definitions = DefinitionsValues.objects.create(box=box, frete_cust=frete)
-        else:
-            data_definitions.box += box
-            data_definitions.frete_cust += frete
-            data_definitions.save()
+        condition = {"id": 45}
+
+        data_exist = DefinitionsValues.objects.filter(**condition).first()
+
+        if data_exist:
+            data_exist.box_cust += box
+            data_exist.frete_cust += frete
+            data_exist.save()
 
         nf_exist = value * (5 / 100)
 
@@ -126,7 +131,7 @@ def entry_value(request):
             gisil_values_instance.emergency += nf_exist
             gisil_values_instance.imposto += 0
             gisil_values_instance.boleto += kilate_value + outher_cust  
-            gisil_values_instance.invest += nf_not_exist
+            gisil_values_instance.invest += nf_exist
             gisil_values_instance.lucro += liquid_value_total
 
             gisil_values_instance.save()
@@ -134,13 +139,7 @@ def entry_value(request):
 
             messages.success(request, 'Pedido Recebido com SUCESSO!!')
             return redirect('gisil-values')
-    # totals = {
-    #     'valor_reserva':request.session['valor_reserva'],
-    #     'valor_imposto':request.session['valor_imposto'],
-    #     'valor_boleto':request.session['valor_boleto'],
-    #     'valor_investimento':request.session['valor_investimento'],
-    #     'valor_lucro_liquido':request.session['valor_lucro_liquido']
-    # }  
+   
     totals = {
         'valor_reserva': request.session.get('valor_reserva', 0),
         'valor_imposto': request.session.get('valor_imposto', 0),
