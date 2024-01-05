@@ -19,5 +19,5 @@ class GisilValues(models.Model):
     lucro = models.FloatField()
 
 class DefinitionsValues(models.Model):
-    box = models.FloatField()
+    box_cust = models.FloatField()
     frete_cust = models.FloatField()
